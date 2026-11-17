@@ -1,0 +1,703 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#142d2a">
+  <title>熊野古道失蹤事件簿｜互動日文推理遊戲</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700;800&family=Noto+Serif+JP:wght@500;600;700&display=swap');
+
+    :root { --ink:#213b35; --forest:#17352f; --deep:#102923; --cream:#f7f4eb; --paper:#fffcf4; --muted:#718078; --line:#e4e6d9; --gold:#bd8652; --gold-light:#f5e9d8; --green:#317463; --danger:#af584b; --shadow:0 18px 55px rgba(27,51,43,.09); }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; background:var(--cream); color:var(--ink); font-family:"Noto Sans TC","Noto Sans JP",sans-serif; line-height:1.75; }
+    button { font:inherit; cursor:pointer; }
+    button:focus-visible { outline:3px solid #d99a57; outline-offset:3px; }
+    .app { display:grid; grid-template-columns:270px minmax(0,1fr); min-height:100vh; }
+    .sidebar { background:var(--forest); color:#f5f4e9; padding:33px 24px; display:flex; flex-direction:column; gap:30px; position:sticky; top:0; height:100vh; overflow-y:auto; }
+    .brand { display:flex; align-items:center; gap:12px; font-size:12px; letter-spacing:.19em; font-weight:800; }
+    .brand-mark { width:38px; height:38px; display:grid; place-items:center; border:1px solid #cfab7b; color:#d5ae77; border-radius:50%; font-size:22px; font-family:serif; }
+    .side-heading { color:#b5c2b9; text-transform:uppercase; font-size:10px; letter-spacing:.19em; font-weight:700; margin:0 0 15px; }
+    .case-id { border:1px solid #50716a; padding:18px; border-radius:13px; background:#ffffff0a; }
+    .case-id strong { display:block; font-family:"Noto Serif JP",serif; font-size:21px; line-height:1.45; letter-spacing:.07em; }
+    .case-id span { display:block; margin-top:10px; color:#c0cec3; font-size:12px; }
+    .chapter-nav { display:grid; gap:7px; }
+    .chapter-link { width:100%; border:1px solid transparent; background:transparent; color:#ccd8d0; text-align:left; padding:12px 10px; border-radius:10px; display:flex; gap:12px; align-items:center; font-size:13px; }
+    .guide-label-short { display:none; }
+    .chapter-link:not(:disabled):hover { background:#ffffff13; }
+    .chapter-link.active { background:#ffffff1a; color:white; border-color:#ffffff30; }
+    .chapter-link:disabled { opacity:.45; cursor:not-allowed; }
+    .chapter-num { display:grid; place-items:center; width:27px; height:27px; flex:none; border:1px solid #88a196; border-radius:50%; font-size:11px; }
+    .chapter-link.active .chapter-num, .chapter-link.done .chapter-num { color:#1e3c33; border-color:#e3ba82; background:#e3ba82; }
+    .side-bottom { margin-top:auto; padding-top:14px; border-top:1px solid #567068; font-size:11px; line-height:1.8; color:#b8c5ba; }
+    .main { min-width:0; }
+    .hero { position:relative; min-height:360px; overflow:hidden; background:linear-gradient(115deg,#183b34 0%,#22493d 59%,#496451 100%); color:#fff9eb; }
+    .hero::after { content:""; position:absolute; inset:0; background:linear-gradient(90deg,rgba(16,41,35,.95) 0%,rgba(16,41,35,.76) 43%,rgba(16,41,35,0) 88%); pointer-events:none; }
+    .hero-art { position:absolute; right:0; top:0; width:min(73%,780px); height:100%; opacity:.96; }
+    .hero-content { position:relative; z-index:1; padding:62px clamp(28px,6.5vw,95px) 57px; max-width:860px; }
+    .eyebrow { font-size:11px; letter-spacing:.23em; font-weight:800; color:#dfb785; text-transform:uppercase; }
+    h1 { font-family:"Noto Serif JP",serif; font-size:clamp(34px,4.2vw,55px); letter-spacing:.08em; line-height:1.32; margin:18px 0 13px; }
+    .hero-sub { color:#e4e8d9; font-size:15px; margin:0; max-width:460px; line-height:1.9; }
+    .hero-tags { margin-top:30px; display:flex; flex-wrap:wrap; gap:9px; }
+    .hero-tags span { border:1px solid #ffffff65; border-radius:30px; padding:4px 13px; font-size:11px; color:#f6ead9; }
+    .start-link { display:inline-flex; align-items:center; min-height:44px; margin-top:20px; padding:7px 18px; border-radius:9px; background:#e9c998; color:#203b32; font-size:13px; font-weight:800; text-decoration:none; }
+    .start-link:hover { background:#f6dcb1; }
+    .start-link:focus-visible { outline:3px solid white; outline-offset:3px; }
+    .workspace { max-width:1140px; margin:auto; padding:38px clamp(24px,5vw,72px) 90px; }
+    .topline { display:flex; align-items:center; justify-content:space-between; gap:18px; margin-bottom:13px; color:#65756d; font-size:12px; font-weight:700; letter-spacing:.05em; }
+    .progress-track { height:6px; background:#e2e8dd; border-radius:10px; overflow:hidden; }
+    .progress-fill { width:0; height:100%; background:linear-gradient(90deg,#c59b66,#477d68); transition:width .35s ease; }
+    .cast-section { margin-top:28px; }
+    .cast-heading { display:flex; flex-wrap:wrap; align-items:baseline; gap:9px 16px; margin-bottom:13px; }
+    .cast-heading h2 { font-family:"Noto Serif JP",serif; font-size:21px; margin:0; }
+    .cast-heading p { font-size:12px; color:var(--muted); margin:0; }
+    .cast-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:11px; }
+    .cast-card { min-width:0; padding:16px; background:var(--paper); border:1px solid #eae8db; border-radius:12px; }
+    .cast-portrait { display:block; width:100%; height:104px; border-radius:9px; margin-bottom:11px; }
+    .cast-role { color:var(--gold); font-size:10px; font-weight:800; letter-spacing:.04em; }
+    .cast-card h3 { font-family:"Noto Serif JP",serif; font-size:18px; margin:1px 0 0; line-height:1.55; }
+    .cast-reading { display:block; font-family:"Noto Sans JP",sans-serif; color:#627e6c; font-size:12px; letter-spacing:.03em; }
+    .cast-card p { margin:8px 0 0; color:#63736a; font-size:11px; line-height:1.65; }
+    .content-grid { display:grid; grid-template-columns:minmax(0,1fr) 240px; align-items:start; gap:25px; margin-top:32px; }
+    .story-column { min-width:0; }
+    .panel { background:var(--paper); border:1px solid #eae8db; border-radius:16px; box-shadow:var(--shadow); }
+    .story-card { padding:31px clamp(23px,3vw,40px); margin-bottom:19px; }
+    .section-label { color:var(--gold); font-size:11px; font-weight:800; letter-spacing:.16em; }
+    .story-card h2 { font-family:"Noto Serif JP",serif; margin:8px 0 14px; font-size:26px; letter-spacing:.04em; }
+    .story-card p { margin:0 0 12px; font-size:14px; line-height:2; color:#4b5c52; }
+    .story-card p:last-child { margin-bottom:0; }
+    .story-highlight { background:#f4efe3; border-left:3px solid var(--gold); border-radius:0 8px 8px 0; padding:11px 16px; margin:16px 0 0; font-size:13px; color:#46594c; }
+    .question-card { padding:31px clamp(22px,3vw,40px) 35px; }
+    .question-top { display:flex; justify-content:space-between; align-items:center; gap:10px; }
+    .pill { font-size:11px; font-weight:800; color:var(--green); background:#e9f1e9; border-radius:99px; padding:4px 11px; }
+    .question-card h3 { font-family:"Noto Serif JP",serif; margin:18px 0 8px; font-size:22px; line-height:1.6; }
+    .question-hint { color:#708078; font-size:13px; margin:0 0 21px; }
+    .japanese { font-family:"Noto Sans JP",sans-serif; }
+    .quote { border-radius:11px; background:#f4f3e9; padding:15px 19px; margin:16px 0 21px; font-size:16px; line-height:1.9; color:#253e35; font-weight:600; }
+    .choices { display:grid; gap:10px; }
+    .choice { width:100%; display:flex; align-items:center; gap:13px; text-align:left; padding:15px 17px; color:var(--ink); border:1px solid #dfe5dc; background:white; border-radius:10px; transition:background .16s,border-color .16s,transform .16s; }
+    .choice:not(:disabled):hover { transform:translateX(3px); border-color:#92ad9d; background:#f7faf6; }
+    .choice.selected { border-color:#437c6b; background:#eaf3ec; box-shadow:inset 0 0 0 1px #437c6b; }
+    .choice.correct { border-color:#4c9070; background:#eef7ec; }
+    .choice.incorrect { border-color:#d28b7f; background:#fff0eb; }
+    .choice:disabled { cursor:default; }
+    .choice-key { width:27px; height:27px; border:1px solid #d1dcd0; border-radius:7px; display:grid; place-items:center; font-size:12px; font-weight:800; flex:none; }
+    .question-actions { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:24px; }
+    .primary { border:none; border-radius:9px; background:var(--forest); color:white; padding:12px 23px; font-weight:700; font-size:13px; min-height:46px; }
+    .primary:hover:not(:disabled) { background:#306b57; }
+    .primary:disabled { opacity:.48; cursor:not-allowed; }
+    .secondary { border:1px solid #b9c9b9; border-radius:9px; color:var(--forest); background:transparent; padding:11px 20px; font-weight:700; font-size:13px; min-height:46px; }
+    .secondary:hover { background:#f1f6ef; }
+    .feedback { margin-top:25px; border-top:1px solid var(--line); padding-top:23px; }
+    .feedback-title { margin:0 0 14px; font-size:15px; font-weight:800; }
+    .feedback-title.ok { color:#347258; }
+    .feedback-title.no { color:#a54f42; }
+    .explanation-list { display:grid; gap:9px; }
+    .explanation { background:#f5f5ee; border-radius:9px; padding:11px 14px; font-size:12px; line-height:1.8; color:#546058; }
+    .explanation strong { color:var(--ink); }
+    .explanation.is-answer { border-left:3px solid #5b9b75; }
+    .evidence-unlock { display:flex; gap:10px; align-items:start; background:#f8eedc; border-radius:9px; color:#704d2e; padding:13px 15px; margin-top:15px; font-size:13px; font-weight:700; }
+    .notebook { min-width:0; max-height:calc(100vh - 48px); overflow-y:auto; background:#f2efe4; border:1px solid #e7e1d1; border-radius:14px; padding:23px 20px; position:sticky; top:24px; }
+    .notebook h2 { font-size:14px; margin:0 0 5px; }
+    .notebook-caption { margin:0 0 18px; color:#859087; font-size:11px; }
+    .evidence-list { list-style:none; margin:0; padding:0; display:grid; gap:11px; }
+    .evidence-list li { border-bottom:1px dashed #d9d8c8; padding-bottom:11px; font-size:12px; line-height:1.6; }
+    .evidence-list li:last-child { border:0; padding:0; }
+    .evidence-icon { color:var(--gold); margin-right:6px; }
+    .evidence-empty { font-size:12px; color:#829086; line-height:1.8; }
+    .sort-list { display:grid; gap:9px; }
+    .sort-row { display:flex; align-items:center; gap:11px; padding:11px 10px 11px 14px; background:#fff; border:1px solid #dfe5dc; border-radius:10px; }
+    .sort-row.right { background:#eef7ec; border-color:#70a683; }
+    .sort-row.wrong { background:#fff1ed; border-color:#dba092; }
+    .sort-index { flex:none; display:grid; place-items:center; background:#edf2ed; border-radius:7px; width:26px; height:26px; font-weight:800; font-size:12px; }
+    .sort-text { flex:1; font-size:13px; line-height:1.6; }
+    .sort-controls { display:flex; gap:3px; }
+    .sort-controls button { border:1px solid #d8e1d8; background:#f8faf6; color:var(--forest); border-radius:6px; width:42px; height:42px; line-height:1; font-size:18px; }
+    .sort-controls button:hover:not(:disabled) { background:#e2ede4; }
+    .sort-controls button:disabled { opacity:.35; cursor:not-allowed; }
+    .final-card { text-align:center; padding:44px 30px; }
+    .final-symbol { display:grid; place-items:center; background:#eaf1e5; width:70px; height:70px; border-radius:50%; margin:0 auto 18px; font-size:35px; color:var(--green); }
+    .final-card h2 { font-family:"Noto Serif JP",serif; font-size:28px; margin:0 0 12px; }
+    .final-card p { max-width:510px; margin:0 auto 12px; color:#526258; font-size:14px; line-height:2; }
+    .final-card .primary { margin-top:12px; }
+    .guide-link { margin-top:14px; border:1px solid #c9ab7f; border-radius:10px; background:#d9b78618; color:#fae3c2; padding:11px 15px; width:100%; text-align:left; font-size:13px; font-weight:700; }
+    .guide-link.active, .guide-link:hover { background:#dfbd8e32; }
+    .guide-hero { padding:55px clamp(24px,6vw,80px) 48px; color:#fff9eb; background:radial-gradient(circle at 85% 20%,#42745d 0%,transparent 42%),linear-gradient(125deg,#142c28,#285143); }
+    .guide-hero h1 { font-size:clamp(30px,4vw,47px); margin:12px 0; }
+    .guide-hero p { margin:0 0 22px; color:#d5e0d4; font-size:14px; }
+    .guide-hero .secondary { color:#fff4db; border-color:#aabfa5; }
+    .guide-hero .secondary:hover { background:#ffffff22; }
+    .guide-workspace { max-width:1140px; margin:auto; padding:34px clamp(20px,5vw,72px) 90px; }
+    .guide-tools { display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin-bottom:15px; }
+    .guide-search { flex:1; min-width:190px; width:100%; max-width:430px; padding:12px 15px; border:1px solid #cdd9cb; border-radius:10px; background:white; font:inherit; font-size:14px; color:var(--ink); }
+    .guide-search:focus-visible { outline:3px solid #d99a57; outline-offset:2px; }
+    .guide-count { color:var(--muted); font-size:12px; }
+    .lesson-filters { display:flex; gap:7px; flex-wrap:wrap; margin-bottom:25px; }
+    .filter-chip { border:1px solid #d9e3d6; border-radius:50px; background:white; color:#536b5d; font-size:12px; padding:8px 14px; min-height:42px; }
+    .filter-chip.active { color:white; background:var(--forest); border-color:var(--forest); }
+    .guide-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; }
+    .lesson-card { padding:25px; min-width:0; }
+    .lesson-card h2 { font-family:"Noto Serif JP",serif; font-size:20px; margin:6px 0 16px; }
+    .grammar-point { padding:14px 0; border-top:1px solid var(--line); }
+    .grammar-point h3 { font-family:"Noto Sans JP","Noto Sans TC",sans-serif; font-size:15px; margin:0 0 5px; }
+    .grammar-point p { margin:0 0 7px; font-size:12px; color:#5a6b60; }
+    .grammar-example { background:#f3f5ed; border-radius:8px; padding:9px 12px; font-size:13px; color:#234238; line-height:1.75; }
+    .grammar-example span { display:block; font-size:11px; color:#76827a; }
+    .guide-empty { padding:25px; text-align:center; color:var(--muted); grid-column:1/-1; }
+    .footer-note { color:#89958d; text-align:center; font-size:11px; margin:32px 0 0; }
+    @media(max-width:980px) { .app { grid-template-columns:1fr; } .sidebar { height:auto; position:static; padding:14px 22px; flex-direction:row; align-items:center; flex-wrap:wrap; gap:12px 22px; } .brand { flex:none; } .case-id, .side-bottom, .side-heading { display:none; } .side-nav { flex:1; min-width:0; } .chapter-nav { display:flex; overflow-x:auto; gap:3px; } .chapter-link { white-space:nowrap; padding:8px; font-size:11px; } .chapter-num { width:22px; height:22px; } .guide-link { width:auto; margin:0; white-space:nowrap; } .cast-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media(max-width:780px) { .guide-grid { grid-template-columns:1fr; } }
+    @media(max-width:680px) {
+      .sidebar { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; align-items:center; padding:12px 16px; }
+      .brand { margin:0; font-size:10px; gap:8px; letter-spacing:.1em; }
+      .brand-mark { width:32px; height:32px; font-size:18px; }
+      .side-nav { grid-column:1/-1; grid-row:2; }
+      .chapter-link { min-width:max-content; min-height:44px; }
+      .guide-link { grid-column:2; grid-row:1; min-height:44px; padding:7px 10px; font-size:12px; }
+      .guide-label-long { display:none; }
+      .guide-label-short { display:inline; }
+      .hero { min-height:0; }
+      .hero-art { width:100%; opacity:.62; }
+      .hero::after { background:linear-gradient(90deg,#102923ed,#10292383); }
+      .hero-content { padding:27px 20px 30px; }
+      .hero-content h1 { font-size:clamp(29px,8vw,40px); margin:10px 0 8px; }
+      .hero-sub { font-size:13px; line-height:1.75; }
+      .hero-tags { margin-top:15px; gap:6px; }
+      .hero-tags span { padding:3px 9px; font-size:10px; }
+      .start-link { margin-top:14px; }
+      .workspace { padding:24px 17px 65px; }
+      .cast-grid { display:flex; overflow-x:auto; scroll-snap-type:x mandatory; overscroll-behavior-x:contain; padding:2px 2px 12px; scrollbar-color:#a9baa8 #e8ede4; }
+      .cast-card { flex:0 0 min(78vw,285px); display:grid; grid-template-columns:72px minmax(0,1fr); gap:0 11px; padding:12px; scroll-snap-align:start; }
+      .cast-portrait { width:72px; height:86px; grid-row:1/5; margin:0; align-self:center; }
+      .cast-card h3 { font-size:17px; }
+      .cast-card p { margin-top:4px; }
+      .content-grid { grid-template-columns:1fr; margin-top:22px; }
+      .notebook { position:static; grid-row:1; max-height:none; overflow:visible; }
+      .notebook .evidence-list { display:flex; overflow-x:auto; }
+      .notebook .evidence-list li { min-width:170px; border:0; border-right:1px dashed #d9d8c8; padding-right:11px; }
+      .notebook .evidence-list li:last-child { border:0; }
+      .story-card, .question-card { padding:24px 20px; }
+      .question-card h3 { font-size:19px; }
+      .sort-row { display:grid; grid-template-columns:26px minmax(0,1fr); align-items:start; gap:6px 10px; }
+      .sort-index { grid-column:1; grid-row:1; }
+      .sort-text { grid-column:2; grid-row:1; }
+      .sort-controls { grid-column:2; grid-row:2; justify-self:end; }
+      .sort-controls button { width:44px; height:44px; }
+      .quote, .grammar-example { overflow-wrap:anywhere; }
+    }
+    @media(prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto !important; transition:none !important; } }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" aria-label="案件導航">
+      <div class="brand"><div class="brand-mark" aria-hidden="true">八</div><span>KUMANO CASE FILE</span></div>
+      <div class="case-id"><div class="side-heading">案件編號 001</div><strong>消失的<br>八咫烏御守</strong><span>地點：熊野古道・山中旅館</span></div>
+      <nav class="side-nav" aria-label="關卡"><p class="side-heading">調查進度 / CHAPTERS</p><div id="chapter-nav" class="chapter-nav"></div></nav>
+      <button type="button" class="guide-link" id="open-guide" aria-label="30～39 課文法速查" aria-controls="guide-view"><span class="guide-label-long">📖 30～39 課文法速查</span><span class="guide-label-short" aria-hidden="true">📖 文法速查</span></button>
+      <div class="side-bottom">調查守則：每題只有一個正解。<br>留意證詞、時間與日文中的細節。</div>
+    </aside>
+
+    <main class="main">
+      <div id="game-view">
+      <header class="hero">
+        <svg class="hero-art" viewBox="0 0 820 360" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <defs><linearGradient id="sky" x2="0" y2="1"><stop stop-color="#567562"/><stop offset="1" stop-color="#b5a77d"/></linearGradient><linearGradient id="mount" x2="0" y2="1"><stop stop-color="#507561"/><stop offset="1" stop-color="#193e35"/></linearGradient></defs>
+          <rect width="820" height="360" fill="url(#sky)"/><circle cx="609" cy="87" r="47" fill="#e4c69b" opacity=".8"/>
+          <path d="M0 208 Q137 105 232 184 Q337 84 455 181 Q575 84 700 184 L820 120 V360 H0Z" fill="#91a18a" opacity=".5"/>
+          <path d="M0 254 Q165 124 290 237 Q413 101 556 227 Q660 145 820 195 V360 H0Z" fill="url(#mount)"/>
+          <path d="M0 291 Q175 196 321 287 Q505 166 680 280 L820 215 V360 H0Z" fill="#24493c"/>
+          <path d="M514 360 Q559 300 618 270 Q592 301 623 360Z" fill="#8b8b68" opacity=".55"/>
+          <g fill="#17392f"><path d="M696 95l-11 110h22zM671 145l-12 97h27zM742 171l-13 114h30zM798 110l-15 135h32z"/><path d="M682 158l-29 24h60zM692 130l-26 24h53zM740 183l-34 25h67zM801 139l-36 29h70z"/></g>
+          <g transform="translate(567 193)" fill="#122d27"><path d="M-48 21h125v8H-48zM-35-5h99v8h-99zM-24-34h79v8h-79z"/><path d="M-42-9l58-33 58 33v6H-42zM-56 17L15-20 85 17v6H-56z"/><path d="M-32 28h10v79h-10zM53 28h10v79H53zM-3 28h34v79H-3z"/></g>
+          <path d="M0 329 Q140 281 293 336 Q434 283 589 343 Q720 310 820 338 V360 H0Z" fill="#102e28"/>
+          <g fill="#e0c495" opacity=".85"><circle cx="395" cy="96" r="2"/><circle cx="413" cy="112" r="1.5"/><circle cx="452" cy="67" r="1.5"/></g>
+        </svg>
+        <div class="hero-content"><div class="eyebrow">A JAPANESE LANGUAGE MYSTERY · EPISODE 01</div><h1>熊野古道<br>失蹤事件簿</h1><p class="hero-sub">一枚御守消失了。三名嫌疑人，各有說詞。你能從日文線索中，找出那個藏起真相的人嗎？</p><div class="hero-tags"><span>4 個調查關卡</span><span id="question-count">29 道推理線索</span><span>逐項答案解析</span></div><a class="start-link" href="#story">開始調查 ↓</a></div>
+      </header>
+
+      <div class="workspace">
+        <div class="topline"><span id="progress-label">調查進度 · 0 / 29</span><span id="chapter-label">CHAPTER 01 / 04</span></div>
+        <div class="progress-track" role="progressbar" aria-label="調查進度" aria-valuemin="0" aria-valuemax="29" aria-valuenow="0" id="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+        <section class="cast-section" aria-labelledby="cast-title">
+          <div class="cast-heading"><h2 id="cast-title">人物檔案</h2><p>手機可左右滑動人物卡；題目會使用角色稱呼。</p></div>
+          <div class="cast-grid">
+            <article class="cast-card">
+              <svg class="cast-portrait" viewBox="0 0 160 104" role="img" aria-label="背著行囊的旅客佐藤陽太插畫" preserveAspectRatio="xMidYMid slice"><rect width="160" height="104" fill="#dce8df"/><circle cx="131" cy="26" r="17" fill="#f2d5a5"/><path d="M0 78Q41 52 77 76T160 68V104H0Z" fill="#9cbea8"/><path d="M21 104Q24 78 54 75H95Q121 77 128 104Z" fill="#4e7281"/><path d="M41 101V77Q41 69 49 69H61V101Z" fill="#ad7b50"/><path d="M52 104Q58 76 80 75Q102 77 107 104Z" fill="#345767"/><path d="M72 75V64H88V75" fill="#dcaa83"/><ellipse cx="80" cy="49" rx="25" ry="29" fill="#edc39a"/><path d="M54 46Q53 19 77 19Q106 16 107 49L98 44Q94 29 78 31L57 47Z" fill="#3e4640"/><path d="M57 44Q52 39 50 51L60 57Z" fill="#3e4640"/><circle cx="72" cy="51" r="2" fill="#3c4b43"/><circle cx="89" cy="51" r="2" fill="#3c4b43"/><path d="M75 61Q80 65 85 61" fill="none" stroke="#a67761" stroke-width="2" stroke-linecap="round"/><path d="M80 76L72 104H87Z" fill="#e5c7a2"/></svg>
+              <div class="cast-role">旅客 · 御守失主</div><h3 lang="ja">佐藤陽太</h3><span class="cast-reading" lang="ja">さとう ようた</span><p>來熊野古道旅行，珍藏的御守突然不見了。</p>
+            </article>
+            <article class="cast-card">
+              <svg class="cast-portrait" viewBox="0 0 160 104" role="img" aria-label="穿圍裙的旅館老闆娘田中小春插畫" preserveAspectRatio="xMidYMid slice"><rect width="160" height="104" fill="#f1e5d7"/><path d="M0 81Q49 64 83 78T160 74V104H0Z" fill="#e4cfb9"/><path d="M27 104Q34 74 59 72H102Q126 75 135 104Z" fill="#6c8477"/><path d="M57 81L80 96L104 81L116 104H45Z" fill="#f6f1e5"/><path d="M67 71V81L80 90L94 81V71" fill="#e5b693"/><circle cx="107" cy="28" r="13" fill="#544a44"/><ellipse cx="80" cy="49" rx="25" ry="29" fill="#f2c9a3"/><path d="M54 47Q51 19 80 18Q102 18 105 44Q92 39 80 28Q68 41 54 47Z" fill="#544a44"/><path d="M56 48Q50 77 58 79L65 67Z" fill="#544a44"/><circle cx="71" cy="50" r="2" fill="#514a44"/><circle cx="89" cy="50" r="2" fill="#514a44"/><path d="M73 61Q80 67 88 61" fill="none" stroke="#aa745e" stroke-width="2" stroke-linecap="round"/><path d="M62 88L80 96L99 88" fill="none" stroke="#c49c74" stroke-width="2"/></svg>
+              <div class="cast-role">旅館老闆娘 · おかみさん</div><h3 lang="ja">田中小春</h3><span class="cast-reading" lang="ja">たなか こはる</span><p>負責旅館晚餐，說案發時一直待在廚房。</p>
+            </article>
+            <article class="cast-card">
+              <svg class="cast-portrait" viewBox="0 0 160 104" role="img" aria-label="頭戴山伏小帽、手持錫杖的玄真插畫" preserveAspectRatio="xMidYMid slice"><rect width="160" height="104" fill="#dce1dc"/><path d="M0 71L35 26L67 72L102 21L160 79V104H0Z" fill="#a2b3aa"/><path d="M0 88L34 64L69 83L118 53L160 80V104H0Z" fill="#718d7c"/><path d="M132 20V104" stroke="#745c43" stroke-width="4"/><circle cx="132" cy="17" r="5" fill="none" stroke="#c6a674" stroke-width="3"/><path d="M31 104Q41 72 65 72H101Q122 77 131 104Z" fill="#4f5c59"/><path d="M56 78L79 95L102 78" fill="#e5ddd0"/><ellipse cx="80" cy="50" rx="24" ry="28" fill="#dfb38d"/><path d="M54 45Q55 24 79 24Q105 25 106 48L95 38Q75 37 58 46Z" fill="#454d48"/><path d="M65 70Q81 85 96 69L90 67Q80 72 70 66Z" fill="#55504a"/><circle cx="71" cy="50" r="2" fill="#3a423d"/><circle cx="89" cy="50" r="2" fill="#3a423d"/><path d="M55 32L81 14L107 32Z" fill="#c9b392"/><path d="M60 32H103" stroke="#534a42" stroke-width="4"/><circle cx="111" cy="81" r="3" fill="#be9872"/><circle cx="116" cy="88" r="3" fill="#be9872"/></svg>
+              <div class="cast-role">山伏 · 修行者</div><h3 lang="ja">玄真</h3><span class="cast-reading" lang="ja">げんしん</span><p>在山中修行，帶著鈴鐺，傍晚才回到旅館。</p>
+            </article>
+            <article class="cast-card">
+              <svg class="cast-portrait" viewBox="0 0 160 104" role="img" aria-label="有圓耳朵和眼圈的狸貓ポン太插畫" preserveAspectRatio="xMidYMid slice"><rect width="160" height="104" fill="#dce8d8"/><circle cx="131" cy="24" r="18" fill="#f3d9a5"/><path d="M0 82Q40 56 85 83T160 74V104H0Z" fill="#9cbc99"/><path d="M104 88Q137 50 148 76Q153 98 125 102Z" fill="#886948"/><path d="M113 82Q138 67 147 78" fill="none" stroke="#d7b583" stroke-width="6"/><path d="M35 104Q44 77 80 77Q118 77 127 104Z" fill="#ae8154"/><path d="M41 42L45 18L67 30M94 30L116 18L120 42" fill="#8d6746"/><path d="M49 32L48 25L60 32M100 32L113 25L111 34" fill="#e7b888"/><ellipse cx="80" cy="53" rx="40" ry="34" fill="#b78a5d"/><path d="M45 51Q54 40 77 48Q70 63 53 66ZM83 48Q106 40 115 51L107 66Q90 62 83 48Z" fill="#644f40"/><ellipse cx="62" cy="54" rx="10" ry="8" fill="#f4ddbc"/><ellipse cx="98" cy="54" rx="10" ry="8" fill="#f4ddbc"/><circle cx="63" cy="54" r="2.5" fill="#342e2b"/><circle cx="97" cy="54" r="2.5" fill="#342e2b"/><ellipse cx="80" cy="68" rx="14" ry="10" fill="#eedac0"/><circle cx="80" cy="65" r="4" fill="#45362f"/><path d="M76 72Q80 76 84 72" fill="none" stroke="#5d4840" stroke-width="2"/><circle cx="95" cy="73" r="2" fill="#f8f6e8"/></svg>
+              <div class="cast-role">狸貓 · たぬき</div><h3 lang="ja">ポン太</h3><span class="cast-reading" lang="ja">ぽんた</span><p>好奇又貪吃的小狸貓，嘴邊還沾著飯粒。</p>
+            </article>
+          </div>
+        </section>
+        <div class="content-grid">
+          <div class="story-column"><section class="panel story-card" id="story" aria-label="案情"></section><section class="panel question-card" id="question" aria-live="polite"></section></div>
+          <aside class="notebook" aria-label="已蒐集線索"><h2>◈ 偵探手札</h2><p class="notebook-caption">答對題目就記下線索，最新發現在最前面。</p><ul class="evidence-list" id="evidence-list"></ul></aside>
+        </div>
+        <p class="footer-note">虛構的熊野古道事件 · 可隨時關閉頁面，進度會保存在此瀏覽器</p>
+      </div>
+      </div>
+      <section id="guide-view" hidden aria-label="30 至 39 課文法速查">
+        <header class="guide-hero"><div class="eyebrow">THE DETECTIVE'S FIELD GUIDE</div><h1>偵探的文法速查簿</h1><p>第 30～39 課 · 依課次找句型，或直接搜尋中文與日文關鍵字。查完隨時回到案發現場。</p><button type="button" class="secondary" id="back-to-game">← 回到案件</button></header>
+        <div class="guide-workspace"><div class="guide-tools"><input id="guide-search" class="guide-search" type="search" placeholder="搜尋：例如 ておく、禁止、可能形" aria-label="搜尋文法重點"><span id="guide-count" class="guide-count" aria-live="polite"></span></div><div id="lesson-filters" class="lesson-filters" aria-label="依課次篩選"></div><div id="guide-grid" class="guide-grid"></div></div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    'use strict';
+    const chapters = [
+      {
+        title:'案發現場', label:'現場搜證 / THE SCENE',
+        story:[
+          '傍晚 17:20，旅客佐藤陽太把八咫烏御守裝在藍色布袋裡，放在客房桌上。旁邊還有一顆飯糰。他關上房門，去走廊取水。',
+          '18:00 回房時，御守和飯糰都不見了，門口還有一串足跡。廚房錄影顯示老闆娘 17:35 正在做飯。調查領隊請你仔細查看窗戶，並提醒其他旅客不要擅自進入客房。'
+        ], note:'注意：布袋裡裝的是御守；飯糰放在布袋旁，不在袋子裡。'
+      },
+      {
+        title:'嫌疑犯證詞', label:'人物訪談 / THE SUSPECTS',
+        story:[
+          '旅館裡有三位值得詢問的人：在廚房做飯的老闆娘田中小春、到森林修行的山伏玄真，以及嘴邊沾著飯粒的狸貓ポン太。',
+          '老闆娘允許你查看客房和後院足跡，但要求大家不要碰證物。調查前必須核對時間與證詞。ポン太看見山伏的鈴鐺嚇得發抖，卻又一直盯著飯糰。'
+        ], note:'山伏說自己 17:45 才從森林回來；ポン太雖說什麼都沒拿，嘴邊卻有飯粒。'
+      },
+      {
+        title:'時間線拼圖', label:'還原經過 / THE TIMELINE',
+        story:[
+          '旅館的時鐘、廚房紀錄與門口足跡拼出四個確定時刻。後院的感應燈一開門就亮；森林那邊突然下起雨，山伏一直走到旅館門口。',
+          '補充紀錄：17:30 老闆娘開始做晚餐；17:40 ポン太從客房窗戶鑽進去；17:42 御守消失；17:45 山伏才回到旅館。調查後院時，山路的霧正逐漸散去。'
+        ], note:'排列題使用每張卡片上的明確時刻；四個事件只有一種順序。'
+      },
+      {
+        title:'最後的推理', label:'真相揭曉 / THE REVEAL',
+        story:[
+          '你在旅館後院找到一個背包。背包拉鍊沒關緊，裡面露出一角藍色布料。那正是旅客放御守的布袋。',
+          '你借來手電筒，終於能看清暗處的足跡。老闆娘提議先查看背包；旅館規定找到遺失物後，要確認失主並歸還。'
+        ], note:'要判斷的是「誰帶走了御守」，不一定是誰想偷御守。'
+      }
+    ];
+
+    const questions = [
+      {chapter:0, lesson:30, title:'窗戶留下的痕跡', prompt:'窗戶當時是開著的。選出描述窗戶狀態的自動詞。', sentence:'窓が（　　　）。', options:[
+        ['開けていました','「開ける」是他動詞，表示某人打開窗戶；不能用「窓が」當開門者。'],
+        ['開いていました','正確。「開く」是自動詞；「開いていました」表示當時持續開著。'],
+        ['開けました','「開けました」表示某人打開了東西，應搭配「窓を」。']
+      ], answer:1, evidence:'客房窗戶在案發時開著。'},
+      {chapter:0, lesson:30, title:'17:35 的廚房錄影', prompt:'鏡頭中老闆娘正攪拌鍋裡的食物；描述當時「正在做晚餐」。', sentence:'おかみさんは台所で夕食を（　　　）。', options:[
+        ['作りました','只表示做了晚餐，沒有表達鏡頭拍到的進行中動作。'],
+        ['作ってありました','「てある」重點是做完後留下的結果，不是鏡頭拍到的烹調過程。'],
+        ['作っていました','正確。「ていました」表示在錄影的那個時間點動作正在進行。']
+      ], answer:2, evidence:'17:35 老闆娘在廚房做飯。'},
+      {chapter:0, lesson:30, title:'布袋原來放在哪裡？', prompt:'有人事先把藍色布袋放好；要描述「放好後留下的狀態」。', sentence:'机の上に青い袋が（　　　）。', options:[
+        ['置いてありました','正確。「置いてある」表示某人放好後，布袋仍在桌上的結果狀態。'],
+        ['置いていました','「置く」是他動詞；這裡的「袋が」不能當放東西的人。'],
+        ['置いておきました','「置いておく」表示事先放好，但這裡的「袋が」不能當放東西的人。']
+      ], answer:0, evidence:'御守裝在旅客放於桌上的藍色布袋裡。'},
+      {chapter:0, lesson:31, title:'領隊下達指令', prompt:'領隊直接命令你「調查窗戶！」；用簡短的命令形完成句子。', sentence:'窓を（　　　）！', options:[
+        ['調べるな','禁止形，意思是「不准調查」，與領隊的命令相反。'],
+        ['調べろ','正確。「調べる」的命令形是「調べろ」，直接要求對方調查。'],
+        ['調べてもいい','表示可以調查，不是命令對方去做。']
+      ], answer:1, evidence:'領隊要求先調查窗戶。'},
+      {chapter:0, lesson:31, title:'封鎖中的客房', prompt:'領隊對其他旅客喊「不准進客房！」；選出禁止形。', sentence:'客室に（　　　）！', options:[
+        ['入れ','「入る」的命令形，意思是「進去！」，與封鎖現場相反。'],
+        ['入ってもいい','表示允許進入，不是禁止。'],
+        ['入るな','正確。動詞辭書形「入る」加「な」是強烈的禁止形。']
+      ], answer:2, evidence:'客房已封鎖，其他旅客不得擅自進入。'},
+      {chapter:0, lesson:39, title:'保留會消失的證據', prompt:'下雨前「先拍下足跡」保存證據；選出事先準備的說法。', sentence:'雨で消える前に足跡の写真を（　　　）。', options:[
+        ['撮っておきました','正確。「ておく」表示為日後調查，事先把足跡拍下來。'],
+        ['撮らなくてもいいです','表示不拍也可以，無法達成事先保留證據。'],
+        ['撮ってはいけません','表示不准拍照，與保留證據的要求相反。']
+      ], answer:0, evidence:'足跡已在下雨前拍照保存。'},
+      {chapter:0, lesson:39, title:'另一樣消失的物品', prompt:'飯糰不見了，令人困擾；用「てしまう」表達不如預期的結果。', sentence:'おにぎりが（　　　）。', options:[
+        ['なくなってしまいました','正確。「なくなる」表示消失；「てしまう」帶出不如預期的遺憾。'],
+        ['なくしてしまいました','「なくす」是他動詞，不能讓「おにぎりが」當弄丟東西的人。'],
+        ['なくなっておきました','「ておく」表示事先準備；飯糰不會自己預先消失。']
+      ], answer:0, evidence:'御守消失時，桌上的飯糰也不見了。'},
+
+      {chapter:1, lesson:32, title:'老闆娘的許可', prompt:'老闆娘說偵探「可以調查客房」；用「てもいい」表達許可。', sentence:'客室を（　　　）。', options:[
+        ['調べてもいいです','正確。「てもいい」表示允許調查。'],
+        ['調べてはいけません','表示不准調查，與老闆娘同意的內容相反。'],
+        ['調べなくてもいいです','表示不調查也沒關係，不等於允許進房調查。']
+      ], answer:0, evidence:'老闆娘准許偵探進客房調查。'},
+      {chapter:1, lesson:32, title:'後院的通行證', prompt:'老闆娘說「進後院看看也沒關係」；用「てもかまわない」。', sentence:'裏庭に（　　　）。', options:[
+        ['入ってはいけません','表示不准進後院。'],
+        ['入ってもかまいません','正確。「てもかまわない」表示做這件事也沒關係。'],
+        ['入らなくてはいけません','表示必須進去，不是「進去也沒關係」。']
+      ], answer:1, evidence:'調查人員獲准進入後院查看足跡。'},
+      {chapter:1, lesson:32, title:'不能碰的證物', prompt:'規則明說「不可以碰證物」；用「てはいけない」。', sentence:'証拠に（　　　）。', options:[
+        ['触れてもいいです','表示可以碰，與保護證物的規則相反。'],
+        ['触れなくてもいいです','表示不碰也可以，不是禁止觸碰。'],
+        ['触れてはいけません','正確。「てはいけない」表示禁止碰證物。']
+      ], answer:2, evidence:'證物不可直接觸碰，須先記錄。'},
+      {chapter:1, lesson:33, title:'必須核對第一份證詞', prompt:'要破解矛盾，「必須確認證詞」；用「なければならない」。', sentence:'証言を（　　　）。', options:[
+        ['確かめなければなりません','正確。「なければならない」表示必須確認。'],
+        ['確かめなくてもいいです','表示不確認也沒關係，違反調查要求。'],
+        ['確かめてはいけません','表示不得確認，與要求相反。']
+      ], answer:0, evidence:'三人的證詞都必須逐一核對。'},
+      {chapter:1, lesson:33, title:'必須記下時間', prompt:'為了比對不在場證明，「必須記下時間」；用「なくてはいけない」。', sentence:'発見時刻を（　　　）。', options:[
+        ['書かなくてもいいです','表示不寫也沒關係。'],
+        ['書かなくてはいけません','正確。「なくてはいけない」表示一定得寫下時間。'],
+        ['書いてはいけません','表示不准寫，與調查目的相反。']
+      ], answer:1, evidence:'你記下了發現御守消失的時間。'},
+      {chapter:1, lesson:33, title:'歸還前的必要步驟', prompt:'御守不能交錯人；「必須確認失主」用「なくてはならない」。', sentence:'持ち主を（　　　）。', options:[
+        ['確認してもいいです','表示可以確認，但沒有必須確認的義務。'],
+        ['確認してはいけません','表示不准確認，會妨礙歸還。'],
+        ['確認しなくてはなりません','正確。「なくてはならない」表示必須確認。']
+      ], answer:2, evidence:'歸還御守前，必須核對真正的失主。'},
+      {chapter:1, lesson:34, title:'鈴聲讓誰害怕？', prompt:'ポン太聽見山伏的鈴聲後發抖；從旁觀者角度描述牠「顯得害怕」。', sentence:'ポン太は鈴の音を（　　　）。', options:[
+        ['怖がっています','正確。「怖い」加「がる」描述第三者表現出的害怕。'],
+        ['怖いです','「怖い」不能直接接「鈴の音を」表示第三者的外顯反應。'],
+        ['怖がりたいです','表示想要感到害怕，不符合發抖的反應。']
+      ], answer:0, evidence:'ポン太害怕山伏的鈴聲。'},
+      {chapter:1, lesson:34, title:'ポン太想吃什麼？', prompt:'ポン太盯著飯糰、流著口水；描述第三者「想吃」的樣子。', sentence:'ポン太はおにぎりを（　　　）。', options:[
+        ['食べたいです','一般直接說自己的願望；此處要由旁觀者描述牠表現出的願望。'],
+        ['食べたがっています','正確。「食べたい」變成「食べたがる」，描述第三者想吃的表現。'],
+        ['食べがっています','「たがる」應接動詞ます形去ます加「たがる」，不能直接接「がる」。']
+      ], answer:1, evidence:'ポン太顯得非常想吃桌上的飯糰。'},
+
+      {chapter:2, lesson:35, title:'誰能鑽進小窗？', prompt:'窗戶很窄；ポン太身形小，所以「能夠進去」。選可能形。', sentence:'ポン太は窓から客室に（　　　）。', options:[
+        ['入ります','表示會進去或進去的動作，不直接表達「有能力進去」。'],
+        ['入れます','正確。「入る」的可能形是「入れる」，表示能夠進入。'],
+        ['入れてあります','「入れてある」表示某人事先放好某物，不表示ポン太能進去。']
+      ], answer:1, evidence:'小窗雖窄，ポン太的體型足以鑽進去。'},
+      {chapter:2, lesson:36, title:'後院的自動燈', prompt:'設備標示寫「每次打開門，燈就自然亮起來」；選出這種固定條件。', sentence:'裏庭の扉を開ける（　　　）、ライトが自動でつきます。', options:[
+        ['と','正確。「と」表示一開門就自然出現的固定結果。'],
+        ['のに','表示明明開了門卻……，與燈自動亮起的常態不合。'],
+        ['まで','表示直到開門為止，無法表達開門後燈才亮。']
+      ], answer:0, evidence:'後院門一開，自動燈就會亮起。'},
+      {chapter:2, lesson:36, title:'如果要查後院', prompt:'老闆娘以前提「要去查後院」提出建議「請帶手電筒」；選「なら」。', sentence:'裏庭を調べる（　　　）、懐中電灯を持っていってください。', options:[
+        ['と','固定條件「と」後面通常不接這種對他人的請求或建議。'],
+        ['なら','正確。「なら」承接要查後院的前提，再提出帶手電筒的建議。'],
+        ['まで','表示直到調查為止，無法表達以調查為前提的建議。']
+      ], answer:1, evidence:'查後院時應攜帶手電筒。'},
+      {chapter:2, type:'sort', title:'四個確定時刻', prompt:'按事件發生的先後，使用 ↑ ↓ 調整卡片順序。', items:[
+        {id:'D', time:'17:45', text:'山伏が旅館に帰りました。', explain:'山伏回來時，御守已經消失。'},
+        {id:'C', time:'17:42', text:'御守がなくなりました。', explain:'御守在ポン太進房後、山伏回來前消失。'},
+        {id:'B', time:'17:30', text:'おかみさんは夕食を作りはじめました。', explain:'老闆娘先開始做晚餐，17:35 的畫面仍看到她在烹調。'},
+        {id:'A', time:'17:40', text:'ポン太は窓から客室に入りました。', explain:'ポン太在御守消失前兩分鐘進入客房。'}
+      ], order:['B','A','C','D'], evidence:'17:30 老闆娘做飯 → 17:40 ポン太進房 → 17:42 御守消失 → 17:45 山伏回來。'},
+      {chapter:2, lesson:37, title:'晚餐何時開始？', prompt:'廚房紀錄：老闆娘 17:30「開始做」晚餐。', sentence:'おかみさんは17:30に夕食を（　　　）。', options:[
+        ['作りはじめました','正確。動詞ます形去ます加「はじめる」，表示開始做晚餐。'],
+        ['作りおわりました','表示做完了；17:30 是開始的時刻。'],
+        ['作りつづけました','表示持續做，不表示開始的那一刻。']
+      ], answer:0, evidence:'老闆娘從 17:30 開始做晚餐。'},
+      {chapter:2, lesson:37, title:'山中的突發狀況', prompt:'森林本來乾燥，雨「突然下起來」；選表示突然開始的複合動詞。', sentence:'雨が突然（　　　）。', options:[
+        ['降りだしました','正確。「降りだす」表示雨突然開始下。'],
+        ['降りおわりました','表示雨停了，和突然開始相反。'],
+        ['降りつづけました','表示雨持續在下，沒有表達剛開始的瞬間。']
+      ], answer:0, evidence:'森林突然下雨，山伏趕著走回旅館。'},
+      {chapter:2, lesson:37, title:'窗戶調查告一段落', prompt:'你已完整檢查窗戶，現在「查完了」。', sentence:'窓を（　　　）。', options:[
+        ['調べはじめました','表示才剛開始調查。'],
+        ['調べおわりました','正確。「調べおわる」表示調查動作已完成。'],
+        ['調べつづけました','表示繼續調查，與已完成不符。']
+      ], answer:1, evidence:'窗戶檢查完成，找到從外面進入的痕跡。'},
+      {chapter:2, lesson:37, title:'山伏走了多久？', prompt:'山伏在森林裡一直走，到 17:45 才回到旅館。', sentence:'山伏は17:45まで山道を（　　　）。', options:[
+        ['歩きおわりました','表示走完；這裡重點是一直走到指定時間。'],
+        ['歩きだしました','表示突然開始走，不能說明持續到 17:45。'],
+        ['歩きつづけました','正確。「歩きつづける」表示走路持續不中斷。']
+      ], answer:2, evidence:'山伏在森林裡持續行走，到 17:45 才回來。'},
+      {chapter:2, lesson:38, title:'霧從剛才到現在', prompt:'從剛才到現在，山路上的霧逐漸散了；選從過去延續至目前的變化。', sentence:'さっきから今まで霧が少しずつ（　　　）。', options:[
+        ['晴れてきました','正確。「てくる」描述變化從先前逐步發展到現在。'],
+        ['晴れていくでしょう','描述從現在往未來的變化，不是到目前為止。'],
+        ['晴れておきました','「ておく」表示事先準備；霧不會主動準備放晴。']
+      ], answer:0, evidence:'霧漸漸散去，後院的地面越來越清楚。'},
+      {chapter:2, lesson:38, title:'接下來的視線', prompt:'氣象預報：從現在起霧會繼續散去。選朝未來延續的變化。', sentence:'これから霧はもっと（　　　）。', options:[
+        ['晴れてきました','表示從過去逐漸變化到現在，與「これから」衝突。'],
+        ['晴れていくでしょう','正確。「ていく」表達從現在往未來繼續變化。'],
+        ['晴れてありました','自動詞「晴れる」不能搭配「てある」表示有人做好的狀態。']
+      ], answer:1, evidence:'接下來視線會更清晰，適合查看後院。'},
+
+      {chapter:3, lesson:38, title:'手電筒改變了什麼？', prompt:'借到手電筒後，你變得能看清暗處的足跡；選「ようになる」。', sentence:'暗い場所でも足跡が（　　　）。', options:[
+        ['見えるようになりました','正確。「ようになる」表示情況改變，現在能看見以前看不清的足跡。'],
+        ['見えることになりました','「ことになる」表示決定或安排，不表示因照明而變得看得見。'],
+        ['見ておきました','表示事先看過；不是光線改善後變得能看見。']
+      ], answer:0, evidence:'有了手電筒，你終於看清後院暗處的足跡。'},
+      {chapter:3, lesson:39, title:'打開背包看看', prompt:'背包露出藍色布料；你「試著打開看看」裡面是什麼。', sentence:'リュックを（　　　）。', options:[
+        ['開けておきました','表示事先打開作準備，不表示試著查看裡面。'],
+        ['開けてみました','正確。「てみる」表示嘗試打開，看看會發現什麼。'],
+        ['開けてはいけません','表示不可以打開，與試著查看相反。']
+      ], answer:1, evidence:'背包裡找到裝著御守的藍色布袋；背包屬於ポン太。'},
+      {chapter:3, lesson:38, title:'旅館決定歸還御守', prompt:'依旅館規定，大家決定把找到的御守歸還失主；選外在安排的結果。', sentence:'見つかった御守を持ち主に（　　　）。', options:[
+        ['返すことになりました','正確。「ことになる」表示依規定、經討論後形成的安排。'],
+        ['返すようになりました','表示逐漸形成歸還的習慣或變化，不是這一次的安排。'],
+        ['返してみました','表示試著歸還，不是已決定要歸還。']
+      ], answer:0, evidence:'旅館已安排找回的御守歸還失主。'},
+      {chapter:3, title:'指認帶走御守的人', prompt:'結合窗戶、時間線、飯粒與背包裡的布袋：誰帶走御守？', sentence:'御守を持っていったのは誰ですか？', options:[
+        ['旅館のおかみさん','17:35 的錄影拍到她在廚房，沒有證據表明她進過客房或持有布袋。'],
+        ['山伏','山伏 17:45 才回旅館，比御守 17:42 消失的時間晚。'],
+        ['ポン太','正確。17:40 他從窗戶進房，嘴邊有飯粒，裝御守的布袋也在他的背包裡。']
+      ], answer:2, evidence:'真相：ポン太把飯糰與漂亮的布袋一起帶走，並不知道袋裡是御守。'}
+    ];
+
+    const grammarLessons = [
+      {number:30, title:'現場的動作與狀態', points:[
+        ['自動詞／他動詞','自動詞描述事物變化，常搭配「が」；他動詞描述某人對事物做的動作，常搭配「を」。','窓が開きました。／人が窓を開けました。','窗戶開了。／有人打開窗戶。'],
+        ['〜ています：動作進行','正在做某事；過去某時點正在進行用「〜ていました」。','おかみさんは料理をしています。','老闆娘正在做飯。'],
+        ['〜ています：狀態持續','變化後的狀態一直維持著。','窓が開いています。','窗戶開著。'],
+        ['〜てあります','有人事先完成動作，留下可觀察的結果；通常搭配他動詞。','机の上に袋が置いてあります。','布袋事先被放在桌上。']
+      ]},
+      {number:31, title:'直接命令與禁止', points:[
+        ['命令形','直接要求對方做；語氣強，宜限於口令、警告或緊急情境。','証拠を調べろ！','去調查證物！'],
+        ['禁止形：辭書形＋な','直接禁止對方做；語氣強，不是一般禮貌請求。','客室に入るな！','不准進客房！']
+      ]},
+      {number:32, title:'可以做與不能做', points:[
+        ['〜てもいい','允許做某事。','ここで写真を撮ってもいいです。','可以在這裡拍照。'],
+        ['〜てもかまわない','做某事也沒關係；「〜てもかまいません」是禮貌說法。','裏庭に入ってもかまいません。','進後院也沒關係。'],
+        ['〜てはいけない','禁止做某事；「〜てはいけません」是禮貌說法。','証拠に触れてはいけません。','不可以碰證物。']
+      ]},
+      {number:33, title:'必須完成的調查', points:[
+        ['〜なければならない','必須做；否定形接「ければならない」。','証言を確かめなければなりません。','必須確認證詞。'],
+        ['〜なくてはいけない','必須做；與上一句型意義相近。','時刻を書かなくてはいけません。','必須寫下時間。'],
+        ['〜なくてはならない','必須做；同樣表義務與必要。','持ち主を確認しなくてはなりません。','必須確認失主。']
+      ]},
+      {number:34, title:'觀察第三者的心情', points:[
+        ['〜がる','描述第三者從外在行為顯露的感受。例：怖い → 怖がる。','ポン太は鈴の音を怖がっています。','ポン太表現出害怕鈴聲的樣子。'],
+        ['〜たがる','描述第三者想做某事的表現；動詞ます形去ます加「たがる」。','ポン太はおにぎりを食べたがっています。','ポン太表現出想吃飯糰的樣子。']
+      ]},
+      {number:35, title:'能不能做到？', points:[
+        ['可能形','表示有能力做，或某事有實現的可能；「入る → 入れる」。','ポン太は小さい窓から入れます。','ポン太能從小窗進去。']
+      ]},
+      {number:36, title:'條件與推理', points:[
+        ['〜と','條件一成立，就自然或反覆出現某個結果；後句通常不接命令。','扉を開けるとライトがつきます。','一開門，燈就會亮。'],
+        ['〜なら','把對方提到的情況當前提，提出建議或判斷。','庭を調べるなら、懐中電灯を持ってください。','如果要查庭院，請帶手電筒。']
+      ]},
+      {number:37, title:'複合動詞追蹤動作', points:[
+        ['〜はじめる','動詞ます形去ます＋はじめる：開始做某事。','おかみさんは料理を作りはじめました。','老闆娘開始做飯。'],
+        ['〜だす','動詞ます形去ます＋だす：突然開始做某事。','急に雨が降りだしました。','雨突然下起來。'],
+        ['〜おわる','動詞ます形去ます＋おわる：把動作做完。','窓を調べおわりました。','查完窗戶了。'],
+        ['〜つづける','動詞ます形去ます＋つづける：持續做某事。','山伏は山道を歩きつづけました。','山伏持續走在山路上。']
+      ]},
+      {number:38, title:'變化、習慣與外在安排', points:[
+        ['〜てくる','變化從過去逐步延續到現在；不同於單純的「朝這裡移動」。','霧が晴れてきました。','霧漸漸散了（到現在）。'],
+        ['〜ていく','變化從現在往未來持續；不同於單純的「往那裡移動」。','これから霧が晴れていきます。','今後霧會繼續散去。'],
+        ['〜ようになる','狀態或習慣改變，逐漸變得能做或開始做。','暗い場所でも足跡が見えるようになりました。','現在連暗處的足跡也看得見了。'],
+        ['〜ことになる','因規定、討論或外在安排，形成某項決定。','御守は持ち主に返すことになりました。','決定把御守還給失主。']
+      ]},
+      {number:39, title:'嘗試、遺憾與預先準備', points:[
+        ['〜てみる','嘗試做某事，看看結果。','リュックを開けてみました。','試著打開背包看看。'],
+        ['〜てしまう','表示動作完成，或不小心發生、令人遺憾。','おにぎりがなくなってしまいました。','飯糰竟然不見了。'],
+        ['〜ておく','為後續目的事先做好，或維持已準備好的狀態。','雨の前に足跡の写真を撮っておきました。','下雨前先拍好足跡照片。']
+      ]}
+    ];
+
+    const storageKey = 'kumano-mystery-v3';
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem(storageKey)) || {}; } catch (_) { saved = {}; }
+    let solved = Number.isInteger(saved.solved) ? Math.max(0, Math.min(questions.length, saved.solved)) : 0;
+    let current = solved;
+    let selected = -1;
+    let sortOrder = [];
+    let submitted = false;
+    let correct = false;
+    let activeLesson = null;
+
+    const $ = id => document.getElementById(id);
+    function el(tag, className, text) {
+      const node = document.createElement(tag);
+      if (className) node.className = className;
+      if (text !== undefined) node.textContent = text;
+      return node;
+    }
+    function persist() { try { localStorage.setItem(storageKey, JSON.stringify({solved})); } catch (_) { /* Private browsing may disable storage. */ } }
+    function chapterFor(index) { return index >= questions.length ? chapters.length - 1 : questions[index].chapter; }
+    function renderNav() {
+      const nav = $('chapter-nav'); nav.replaceChildren();
+      chapters.forEach((chapter, i) => {
+        const first = questions.findIndex(q => q.chapter === i);
+        const next = questions.findIndex(q => q.chapter > i);
+        const end = next < 0 ? questions.length : next;
+        const unlocked = first <= solved;
+        const button = el('button', 'chapter-link' + (i === chapterFor(current) ? ' active' : '') + (solved >= end ? ' done' : ''));
+        button.type = 'button'; button.disabled = !unlocked;
+        button.setAttribute('aria-label', `第 ${i+1} 關：${chapter.title}${unlocked ? '' : '，尚未解鎖'}`);
+        button.append(el('span', 'chapter-num', solved >= end ? '✓' : String(i+1).padStart(2,'0')), el('span', '', chapter.title));
+        button.addEventListener('click', () => { showGame(); current = first; resetQuestion(); render(); });
+        nav.append(button);
+      });
+    }
+    function renderStory() {
+      const chapterIndex = chapterFor(current), chapter = chapters[chapterIndex], card = $('story');
+      card.replaceChildren(el('div', 'section-label', `CHAPTER ${String(chapterIndex+1).padStart(2,'0')} · ${chapter.label}`), el('h2','',chapter.title));
+      chapter.story.forEach(text => card.append(el('p','',text)));
+      card.append(el('div','story-highlight', chapter.note));
+    }
+    function renderEvidence() {
+      const list = $('evidence-list'); list.replaceChildren();
+      if (!solved) { list.append(el('li','evidence-empty','目前沒有線索。先從窗戶開始調查吧。')); return; }
+      for (let i = solved - 1; i >= 0; i--) {
+        const item = el('li'); item.append(el('span','evidence-icon','✦'), el('span','',`${String(i+1).padStart(2,'0')} · ${questions[i].evidence}`)); list.append(item);
+      }
+    }
+    function renderChoices(q, container) {
+      q.options.forEach(([label],i) => {
+        const button = el('button','choice' + (selected === i ? ' selected' : '') + (submitted ? (i === q.answer ? ' correct' : (selected === i ? ' incorrect' : '')) : ''));
+        button.type = 'button'; button.disabled = submitted && correct;
+        button.setAttribute('aria-pressed',String(selected === i));
+        button.append(el('span','choice-key','ABC'[i]),el('span','japanese',label));
+        button.addEventListener('click',() => { if (submitted) { submitted = false; correct = false; } selected = i; renderQuestion(); });
+        container.append(button);
+      });
+    }
+    function moveItem(index, delta) {
+      const other = index + delta;
+      if (other < 0 || other >= sortOrder.length || correct) return;
+      [sortOrder[index],sortOrder[other]] = [sortOrder[other],sortOrder[index]];
+      submitted = false; renderQuestion();
+    }
+    function renderSorting(q, container) {
+      if (!sortOrder.length) sortOrder = q.items.map(item => item.id);
+      const list = el('div','sort-list');
+      sortOrder.forEach((id, i) => {
+        const item = q.items.find(it => it.id === id);
+        const row = el('div','sort-row' + (submitted ? (q.order[i] === id ? ' right' : ' wrong') : ''));
+        const text = el('span','sort-text');
+        text.append(el('strong','',item.time + ' · '), el('span','japanese',item.text));
+        const controls = el('div','sort-controls');
+        for (const [symbol, delta, label] of [['↑',-1,'上移'],['↓',1,'下移']]) {
+          const button = el('button','',symbol); button.type = 'button'; button.disabled = correct || i+delta < 0 || i+delta >= sortOrder.length;
+          button.setAttribute('aria-label', `${item.time} ${label}`); button.addEventListener('click',() => moveItem(i,delta)); controls.append(button);
+        }
+        row.append(el('span','sort-index',String(i+1)),text,controls); list.append(row);
+      });
+      container.append(list);
+    }
+    function renderFeedback(q, card) {
+      if (!submitted) return;
+      const feedback = el('div','feedback'); feedback.setAttribute('role','status');
+      feedback.append(el('p','feedback-title ' + (correct ? 'ok' : 'no'),correct ? '✓ 推理正確！完整解析如下：' : '✕ 線索還沒對上。看看各項解析，再試一次：'));
+      const list = el('div','explanation-list');
+      if (q.type === 'sort') {
+        q.order.forEach((id,i) => {
+          const item = q.items.find(it => it.id === id);
+          list.append(el('div','explanation is-answer',`${i+1}. ${item.time}｜${item.text} ${item.explain}`));
+        });
+      } else {
+        q.options.forEach(([label, explanation],i) => {
+          const box = el('div','explanation' + (i === q.answer ? ' is-answer' : ''));
+          box.append(el('strong','',`${'ABC'[i]} · ${label} ${i === q.answer ? '✓ 正確' : '✕ 不合適'}`),el('span','',`　${explanation}`)); list.append(box);
+        });
+      }
+      feedback.append(list);
+      if (correct) feedback.append(el('div','evidence-unlock',`✦ 新線索解鎖：${q.evidence}`));
+      card.append(feedback);
+    }
+    function submit() {
+      const q = questions[current];
+      if (q.type !== 'sort' && selected < 0) return;
+      correct = q.type === 'sort' ? sortOrder.every((id,i) => id === q.order[i]) : selected === q.answer;
+      submitted = true;
+      if (correct && current === solved) { solved++; persist(); }
+      render();
+      $('feedback')?.scrollIntoView({behavior:'smooth',block:'nearest'});
+    }
+    function nextQuestion() {
+      current = Math.min(current+1, questions.length);
+      resetQuestion(); render();
+      $('story').scrollIntoView({behavior:'smooth',block:'start'});
+    }
+    function resetQuestion() { selected = -1; sortOrder = []; submitted = false; correct = false; }
+    function showGuide() {
+      $('game-view').hidden = true; $('guide-view').hidden = false;
+      $('open-guide').classList.add('active'); $('open-guide').setAttribute('aria-pressed','true');
+      renderGuide(); window.scrollTo({top:0,behavior:'smooth'});
+    }
+    function showGame() {
+      $('guide-view').hidden = true; $('game-view').hidden = false;
+      $('open-guide').classList.remove('active'); $('open-guide').setAttribute('aria-pressed','false');
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+    function renderFilters() {
+      const filters = $('lesson-filters'); filters.replaceChildren();
+      [[null,'全部'],...grammarLessons.map(lesson => [lesson.number,`第${lesson.number}課`])].forEach(([number,label]) => {
+        const chip = el('button','filter-chip' + (activeLesson === number ? ' active' : ''),label);
+        chip.type = 'button'; chip.setAttribute('aria-pressed',String(activeLesson === number));
+        chip.addEventListener('click',() => { activeLesson = number; renderFilters(); renderGuide(); });
+        filters.append(chip);
+      });
+    }
+    function renderGuide() {
+      const query = $('guide-search').value.trim().toLocaleLowerCase();
+      const grid = $('guide-grid'); grid.replaceChildren();
+      let found = 0;
+      grammarLessons.forEach(lesson => {
+        if (activeLesson !== null && lesson.number !== activeLesson) return;
+        const matchLesson = `${lesson.number} 第${lesson.number}課 ${lesson.title}`.toLocaleLowerCase().includes(query);
+        const points = lesson.points.filter(point => matchLesson || point.some(part => part.toLocaleLowerCase().includes(query)));
+        if (!points.length) return;
+        found += points.length;
+        const card = el('article','panel lesson-card');
+        card.append(el('div','section-label',`LESSON ${lesson.number}`),el('h2','',lesson.title));
+        points.forEach(([form,meaning,example,translation]) => {
+          const item = el('div','grammar-point'); item.append(el('h3','japanese',form),el('p','',meaning));
+          const sample = el('div','grammar-example japanese',example); sample.append(el('span','',translation));
+          item.append(sample); card.append(item);
+        });
+        grid.append(card);
+      });
+      $('guide-count').textContent = `找到 ${found} 個重點`;
+      if (!found) grid.append(el('div','panel guide-empty','找不到符合的句型，試試別的關鍵字或選擇「全部」。'));
+    }
+    function renderEnding(card) {
+      card.classList.add('final-card'); card.replaceChildren();
+      card.append(el('div','final-symbol','✦'),el('div','section-label','CASE CLOSED · 真相大白'),el('h2','','御守找到了！'));
+      card.append(el('p','','ポン太看到桌上的飯糰，從開著的窗戶鑽進客房。牠把飯糰和漂亮的藍色布袋一起收進背包，根本不知道布袋裡裝著珍貴的八咫烏御守。'));
+      card.append(el('p','japanese','ポン太はおにぎりと青い袋を持っていきました。でも、袋の中に御守があることは知りませんでした。'));
+      const restart = el('button','primary','↻ 重新調查這起事件'); restart.type = 'button';
+      restart.addEventListener('click',() => { solved = 0; current = 0; persist(); resetQuestion(); render(); $('story').scrollIntoView({behavior:'smooth'}); });
+      const review = el('button','secondary','📖 回顧文法重點'); review.type = 'button'; review.addEventListener('click',showGuide);
+      card.append(restart,el('span','', '　'),review);
+    }
+    function renderQuestion() {
+      const card = $('question'); card.classList.remove('final-card'); card.replaceChildren();
+      if (current >= questions.length) { renderEnding(card); return; }
+      const q = questions[current];
+      const top = el('div','question-top'); top.append(el('div','section-label',`線索 ${String(current+1).padStart(2,'0')} / ${questions.length}`),el('span','pill',q.lesson ? `第 ${q.lesson} 課` : '時間排序'));
+      card.append(top,el('h3','',q.title),el('p','question-hint',q.prompt));
+      if (q.sentence) card.append(el('div','quote japanese',q.sentence));
+      const body = el('div'); if (q.type === 'sort') renderSorting(q,body); else { body.className = 'choices'; renderChoices(q,body); }
+      card.append(body);
+      renderFeedback(q,card);
+      if (submitted) card.lastElementChild.id = 'feedback';
+      const actions = el('div','question-actions');
+      if (correct) {
+        const next = el('button','primary',current === questions.length-1 ? '揭開事件真相 →' : '繼續調查下一條線索 →');
+        next.type = 'button'; next.addEventListener('click',nextQuestion); actions.append(next);
+      } else {
+        const check = el('button','primary',submitted ? '重新確認答案' : '提交推理');
+        check.type = 'button'; check.disabled = q.type !== 'sort' && selected < 0;
+        check.addEventListener('click',submit); actions.append(check);
+        if (q.type === 'sort') actions.append(el('span','question-hint','先用箭頭調整順序，再提交。'));
+      }
+      const review = el('button','secondary','📖 查文法'); review.type = 'button';
+      review.addEventListener('click',() => { activeLesson = q.lesson || null; $('guide-search').value = ''; renderFilters(); showGuide(); });
+      actions.append(review);
+      card.append(actions);
+    }
+    function render() {
+      $('question-count').textContent = `${questions.length} 道推理線索`;
+      $('progress-label').textContent = `調查進度 · ${solved} / ${questions.length}`;
+      $('chapter-label').textContent = `CHAPTER ${String(chapterFor(current)+1).padStart(2,'0')} / 04`;
+      $('progress-fill').style.width = `${100*solved/questions.length}%`;
+      $('progress-track').setAttribute('aria-valuenow',String(solved));
+      $('progress-track').setAttribute('aria-valuemax',String(questions.length));
+      renderNav(); renderStory(); renderEvidence(); renderQuestion();
+    }
+    $('open-guide').addEventListener('click',() => { activeLesson = null; $('guide-search').value = ''; renderFilters(); showGuide(); });
+    $('back-to-game').addEventListener('click',showGame);
+    $('guide-search').addEventListener('input',renderGuide);
+    renderFilters();
+    render();
+  </script>
+</body>
+</html>
